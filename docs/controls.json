@@ -1,0 +1,268 @@
+[
+  {
+    "name": "One-step safe is not enough",
+    "why": "fast reaches a currently safe state, but the environment can force leak next. review preserves a closed safe region.",
+    "input": {
+      "states": [
+        {
+          "name": "choose",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "fast",
+              "to": "pending"
+            },
+            {
+              "action": "review",
+              "to": "approved"
+            }
+          ]
+        },
+        {
+          "name": "pending",
+          "owner": "environment",
+          "safe": true,
+          "moves": [
+            {
+              "action": "ok",
+              "to": "approved"
+            },
+            {
+              "action": "fault",
+              "to": "leak"
+            }
+          ]
+        },
+        {
+          "name": "approved",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "wait",
+              "to": "approved"
+            }
+          ]
+        },
+        {
+          "name": "leak",
+          "owner": "environment",
+          "safe": false,
+          "moves": [
+            {
+              "action": "stay",
+              "to": "leak"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Same edges, different owner",
+    "why": "Only pending changes to controller ownership. Choosing ok now avoids fault, so fast becomes a winning move.",
+    "input": {
+      "states": [
+        {
+          "name": "choose",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "fast",
+              "to": "pending"
+            },
+            {
+              "action": "review",
+              "to": "approved"
+            }
+          ]
+        },
+        {
+          "name": "pending",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "ok",
+              "to": "approved"
+            },
+            {
+              "action": "fault",
+              "to": "leak"
+            }
+          ]
+        },
+        {
+          "name": "approved",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "wait",
+              "to": "approved"
+            }
+          ]
+        },
+        {
+          "name": "leak",
+          "owner": "environment",
+          "safe": false,
+          "moves": [
+            {
+              "action": "stay",
+              "to": "leak"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Five-step forced failure",
+    "why": "Every move is forced. Losing ranks propagate across five currently safe states before the fixed point.",
+    "input": {
+      "states": [
+        {
+          "name": "s0",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s1"
+            }
+          ]
+        },
+        {
+          "name": "s1",
+          "owner": "environment",
+          "safe": true,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s2"
+            }
+          ]
+        },
+        {
+          "name": "s2",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s3"
+            }
+          ]
+        },
+        {
+          "name": "s3",
+          "owner": "environment",
+          "safe": true,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s4"
+            }
+          ]
+        },
+        {
+          "name": "s4",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s5"
+            }
+          ]
+        },
+        {
+          "name": "s5",
+          "owner": "environment",
+          "safe": false,
+          "moves": [
+            {
+              "action": "next",
+              "to": "s5"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Safe environment cycle",
+    "why": "Every environment successor remains safe. The winning invariant can contain cycles.",
+    "input": {
+      "states": [
+        {
+          "name": "a",
+          "owner": "environment",
+          "safe": true,
+          "moves": [
+            {
+              "action": "left",
+              "to": "b"
+            },
+            {
+              "action": "right",
+              "to": "a"
+            }
+          ]
+        },
+        {
+          "name": "b",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "return",
+              "to": "a"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Safety without progress",
+    "why": "Waiting forever satisfies this safety objective. No completion or liveness property is specified.",
+    "input": {
+      "states": [
+        {
+          "name": "idle",
+          "owner": "controller",
+          "safe": true,
+          "moves": [
+            {
+              "action": "wait",
+              "to": "idle"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Already unsafe",
+    "why": "Failure has happened at step zero. The counterstrategy proof stops at the unsafe root.",
+    "input": {
+      "states": [
+        {
+          "name": "bad",
+          "owner": "environment",
+          "safe": false,
+          "moves": [
+            {
+              "action": "stay",
+              "to": "bad"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
