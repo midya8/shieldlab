@@ -1,0 +1,566 @@
+[
+  {
+    "id": "first_visit",
+    "name": "One acknowledgement is not recurrence",
+    "description": "The first target visit succeeds in the old stopping game. The live outgoing target edge then enters a permanent safe wait.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "send",
+                "to": "ack"
+              }
+            ]
+          },
+          {
+            "name": "ack",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "leave",
+                "to": "idle"
+              }
+            ]
+          },
+          {
+            "name": "idle",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "idle"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "ack"
+      ]
+    },
+    "expected_winning": []
+  },
+  {
+    "id": "controlled_return",
+    "name": "Control the return",
+    "description": "The target controller can return instead of drain. It must keep choosing return on every visit.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "start"
+              },
+              {
+                "action": "send",
+                "to": "ack"
+              }
+            ]
+          },
+          {
+            "name": "ack",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "return",
+                "to": "start"
+              },
+              {
+                "action": "drain",
+                "to": "idle"
+              }
+            ]
+          },
+          {
+            "name": "idle",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "idle"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "ack"
+      ]
+    },
+    "expected_winning": [
+      "start",
+      "ack"
+    ]
+  },
+  {
+    "id": "adversarial_return",
+    "name": "Same graph, different owner",
+    "description": "Change only the target owner. The environment may drain into a target-free cycle; no fairness rescues the controller.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "start"
+              },
+              {
+                "action": "send",
+                "to": "ack"
+              }
+            ]
+          },
+          {
+            "name": "ack",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "return",
+                "to": "start"
+              },
+              {
+                "action": "drain",
+                "to": "idle"
+              }
+            ]
+          },
+          {
+            "name": "idle",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "idle"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "ack"
+      ]
+    },
+    "expected_winning": []
+  },
+  {
+    "id": "nonbottom_cycle",
+    "name": "An exit is not an obligation",
+    "description": "Both states are in one target-containing SCC. The environment can keep taking the target-free wait rather than the exit.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "wait",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "wait"
+              },
+              {
+                "action": "visit",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "return",
+                "to": "wait"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": []
+  },
+  {
+    "id": "unsafe_after_goal",
+    "name": "Success does not stop this game",
+    "description": "The goal outgoing edge is a safety obligation under recurrence, unlike first-hit reach-avoid.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "goal",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "leave",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "bad",
+            "owner": "environment",
+            "safe": false,
+            "moves": [
+              {
+                "action": "reset",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": []
+  },
+  {
+    "id": "goal_self_loop",
+    "name": "One state, infinitely many visits",
+    "description": "A safe target self-loop wins; recurrence does not require distinct targets or nontrivial travel.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "again",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": [
+      "goal"
+    ]
+  },
+  {
+    "id": "empty_targets",
+    "name": "Safe forever, never a target",
+    "description": "No target makes recurrence impossible even when every state is safe.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "safe",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "safe"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": []
+    },
+    "expected_winning": []
+  },
+  {
+    "id": "all_targets",
+    "name": "Every step is a target",
+    "description": "With all states safe and targets, every play wins recurrence.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "a",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "a"
+              },
+              {
+                "action": "switch",
+                "to": "b"
+              }
+            ]
+          },
+          {
+            "name": "b",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "back",
+                "to": "a"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "b",
+        "a"
+      ]
+    },
+    "expected_winning": [
+      "a",
+      "b"
+    ]
+  },
+  {
+    "id": "unsafe_root",
+    "name": "A future goal cannot erase a leak",
+    "description": "An unsafe state fails immediately even if it can move into an otherwise safe recurrent goal.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "bad",
+            "owner": "controller",
+            "safe": false,
+            "moves": [
+              {
+                "action": "repair",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": [
+      "goal"
+    ]
+  },
+  {
+    "id": "mixed_stalling",
+    "name": "Winning targets are not a progress shield",
+    "description": "Every safe state is winning. Repeatedly selecting within-region detours can still produce a target-free cycle.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "a",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "detour",
+                "to": "b"
+              },
+              {
+                "action": "visit",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "b",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "detour",
+                "to": "a"
+              },
+              {
+                "action": "visit",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "return",
+                "to": "a"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": [
+      "a",
+      "b",
+      "goal"
+    ]
+  },
+  {
+    "id": "six_ring",
+    "name": "A full six-state return",
+    "description": "Every forced turn remains safe and reaches the target repeatedly, with alternating owners.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "s0",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s1"
+              }
+            ]
+          },
+          {
+            "name": "s1",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s2"
+              }
+            ]
+          },
+          {
+            "name": "s2",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s3"
+              }
+            ]
+          },
+          {
+            "name": "s3",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s4"
+              }
+            ]
+          },
+          {
+            "name": "s4",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s5"
+              }
+            ]
+          },
+          {
+            "name": "s5",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s0"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "s5"
+      ]
+    },
+    "expected_winning": [
+      "s0",
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5"
+    ]
+  },
+  {
+    "id": "unreachable_goal",
+    "name": "A disconnected target changes nothing",
+    "description": "The supplied target exists but a separate waiting component cannot reach it.",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "wait",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "wait"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "expected_winning": [
+      "goal"
+    ]
+  }
+]
