@@ -1,0 +1,46 @@
+{
+  "arena": {
+    "states": [
+      {
+        "name": "choose",
+        "owner": "controller",
+        "safe": true,
+        "moves": [
+          {
+            "action": "wait",
+            "to": "choose"
+          },
+          {
+            "action": "finish",
+            "to": "done"
+          }
+        ]
+      },
+      {
+        "name": "done",
+        "owner": "environment",
+        "safe": true,
+        "moves": [
+          {
+            "action": "after",
+            "to": "bad"
+          }
+        ]
+      },
+      {
+        "name": "bad",
+        "owner": "controller",
+        "safe": false,
+        "moves": [
+          {
+            "action": "stay",
+            "to": "bad"
+          }
+        ]
+      }
+    ]
+  },
+  "goals": [
+    "done"
+  ]
+}
