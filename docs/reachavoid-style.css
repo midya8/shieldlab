@@ -1,0 +1,4 @@
+#policy-outcome,#policy-summary{max-height:350px;overflow:auto}#policy-view .card p,#state-view .card p{margin-bottom:8px}#policy-path .card{border-left:3px solid #73a89a;padding-left:14px}#status.error{color:#b8202c}select{min-width:0}pre{max-width:100%}#policy-choices:empty{display:none}.verdict{font-weight:600;color:#38685c}#proof-edges:empty{display:none}
+
+#stats .card{border-top:3px solid #73a89a;padding:12px;background:#f5f8f7}#stats .card h3{font-size:30px;line-height:1.2;margin:0 0 8px}#stats .card p{font-size:13px;line-height:1.5;margin:0}
+@media (max-width:420px){#stats{grid-template-columns:1fr}#stats .card{display:grid;grid-template-columns:5rem 1fr;align-items:center;gap:.5rem}#stats .card h3{margin:0;white-space:nowrap}}

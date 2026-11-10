@@ -39,3 +39,19 @@ Eight native tests cover all 21,952 three-state total graphs across every owners
 ## Limits
 
 Finite, total, deterministic moves and turn-based perfect information. Adversarial environment, not probabilities. Safety is never visiting unsafe, not progress or reward. This is a model inspector, not a deployed shield or guarantee about an LLM or real software. No model API, private dataset, new algorithm, formal proof, temporal-logic compiler or scalability claim. Original implementation/fixtures; established theory is attributed.
+
+## Safe waiting is not arrival
+
+[Reach-avoid inspector](https://midya8.github.io/shieldlab/reachavoid.html) | [Precise contract and eight-source ledger](REACHAVOID.md)
+
+A separate finite first-goal objective now distinguishes safe waiting from forced arrival. Inspect every synchronous attractor obligation, exact minimum worst-case move bound, rank-decreasing strategy graph and complete target-avoiding counterstrategy. A move to a winning successor can still stall forever. A slower detour can also be winning: every positional controller assignment is evaluated separately, including a worst-case goal path, unsafe path or non-goal lasso for each root.
+
+```sh
+python -m shieldlab.reachavoid docs/reachavoid-example.json --output reachavoid.json
+python -m shieldlab.reachavoid reachavoid.json --verify
+# After installation: shieldlab-reachavoid
+```
+
+Terminal goals must be safe and stop the play on first hit. Empty targets lose; an unsafe root loses immediately. Safety-until-goal treats success as absorbing and is not necessarily the original nonterminal infinite-safety objective. No fairness, probabilistic model, recurrent-goal guarantee, real deployment or new algorithm is implied.
+
+All 24 native test functions (8 original plus 16 new) pass on Python 3.10-3.13. Independent deterministic strategy-pair simulation checks 324 two-state and 32,928 three-state cases; 120 seeded larger cases and the 729-policy boundary have full replay. All six Node/Chrome tests pass. Complete native/JavaScript agreement covers 457 reports, 1,329 policies and 6,291 root outcomes. Actual Chrome drills all 12 controls at 320/390/1280, including every policy/root and 12 actual exports verified by the native CLI. Fresh installed wheels on all four Python versions reproduce 6 original and 12 reach-avoid reports through both entrypoints, check 8 module origins and reject 20 forged CLI records. These counts describe bounded coverage, not a proof or scaling benchmark. The original safety engine, checker, controls, JavaScript and tests retain their original semantics.

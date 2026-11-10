@@ -1,4 +1,4 @@
-name: Check finite safety games
+name: Check finite safety and reach-avoid games
 on: [push, pull_request]
 permissions:
   contents: read

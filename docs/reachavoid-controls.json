@@ -1,0 +1,583 @@
+[
+  {
+    "id": "stall",
+    "title": "A winning successor can still stall",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "choose",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "choose"
+              },
+              {
+                "action": "finish",
+                "to": "done"
+              }
+            ]
+          },
+          {
+            "name": "done",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "after",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "bad",
+            "owner": "controller",
+            "safe": false,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "done"
+      ]
+    },
+    "why": "Both wait and finish target winning states. Repeating wait never reaches the goal; finish has worst-case bound of 1. Goal success stops before the after move."
+  },
+  {
+    "id": "owner_flip",
+    "title": "The environment can wait forever",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "choose",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "choose"
+              },
+              {
+                "action": "finish",
+                "to": "done"
+              }
+            ]
+          },
+          {
+            "name": "done",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "after",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "bad",
+            "owner": "controller",
+            "safe": false,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "done"
+      ]
+    },
+    "why": "Changing only the owner of choose removes its reach-avoid guarantee. It remains safe-until-goal. No fairness assumption forces finish."
+  },
+  {
+    "id": "detour",
+    "title": "A slower policy can still win",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "direct",
+                "to": "goal"
+              },
+              {
+                "action": "detour",
+                "to": "middle"
+              }
+            ]
+          },
+          {
+            "name": "middle",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "finish",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "The detour is winning in two moves but is not rank-optimal. Not every nonoptimal action causes failure."
+  },
+  {
+    "id": "adversary",
+    "title": "Worst case, not a favorable path",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "short",
+                "to": "goal"
+              },
+              {
+                "action": "long",
+                "to": "middle"
+              }
+            ]
+          },
+          {
+            "name": "middle",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "finish",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "An environment branch of length 2 sets the bound even though a one-step path exists."
+  },
+  {
+    "id": "unsafe_shortcut",
+    "title": "Unsafe shortcut is not a reach-avoid route",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "fast",
+                "to": "bad"
+              },
+              {
+                "action": "review",
+                "to": "middle"
+              }
+            ]
+          },
+          {
+            "name": "middle",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "ok",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "after",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "bad",
+            "owner": "environment",
+            "safe": false,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "A terminal goal may have unsafe outgoing edges, but hitting unsafe before the goal loses."
+  },
+  {
+    "id": "five_steps",
+    "title": "A five-move forced arrival",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "s0",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s1"
+              }
+            ]
+          },
+          {
+            "name": "s1",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s2"
+              }
+            ]
+          },
+          {
+            "name": "s2",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s3"
+              }
+            ]
+          },
+          {
+            "name": "s3",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s4"
+              }
+            ]
+          },
+          {
+            "name": "s4",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "s5"
+              }
+            ]
+          },
+          {
+            "name": "s5",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "s5"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "s5"
+      ]
+    },
+    "why": "All five strict rank decreases appear in the complete strategy graph."
+  },
+  {
+    "id": "no_goals",
+    "title": "Safe forever is not arrival",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "idle",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "idle"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": []
+    },
+    "why": "The empty target loses reach-avoid despite winning safety-until-goal. The single one-action controller assignment is still counted."
+  },
+  {
+    "id": "all_goals",
+    "title": "First hit takes zero moves",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "a",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "b"
+              }
+            ]
+          },
+          {
+            "name": "b",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "next",
+                "to": "a"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "b",
+        "a"
+      ]
+    },
+    "why": "Both roots succeed immediately. Goal order normalizes to arena order; goal actions are not policy decisions."
+  },
+  {
+    "id": "unreachable",
+    "title": "A visible target can be unreachable",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "idle",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "wait",
+                "to": "idle"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "The complete target-avoiding trap and a lasso show why graph presence does not imply reachability."
+  },
+  {
+    "id": "two_goals",
+    "title": "Either terminal goal is enough",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "choose",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "left",
+                "to": "g1"
+              },
+              {
+                "action": "right",
+                "to": "g2"
+              }
+            ]
+          },
+          {
+            "name": "g1",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "after",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "g2",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "after",
+                "to": "bad"
+              }
+            ]
+          },
+          {
+            "name": "bad",
+            "owner": "controller",
+            "safe": false,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "bad"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "g1",
+        "g2"
+      ]
+    },
+    "why": "Both adversarial branches hit a safe goal in one move. The objective does not require visiting both goals."
+  },
+  {
+    "id": "parallel",
+    "title": "Two action assignments, one target behavior",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "start",
+            "owner": "controller",
+            "safe": true,
+            "moves": [
+              {
+                "action": "a",
+                "to": "goal"
+              },
+              {
+                "action": "b",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "Policy counts keep distinct action labels even when they have the same target. Counts are not behavior equivalence classes."
+  },
+  {
+    "id": "unsafe_root",
+    "title": "An already-unsafe root loses",
+    "input": {
+      "arena": {
+        "states": [
+          {
+            "name": "bad",
+            "owner": "controller",
+            "safe": false,
+            "moves": [
+              {
+                "action": "escape",
+                "to": "goal"
+              }
+            ]
+          },
+          {
+            "name": "goal",
+            "owner": "environment",
+            "safe": true,
+            "moves": [
+              {
+                "action": "stay",
+                "to": "goal"
+              }
+            ]
+          }
+        ]
+      },
+      "goals": [
+        "goal"
+      ]
+    },
+    "why": "A later safe target cannot repair an unsafe prefix. No move is taken from the unsafe root."
+  }
+]
