@@ -55,3 +55,21 @@ python -m shieldlab.reachavoid reachavoid.json --verify
 Terminal goals must be safe and stop the play on first hit. Empty targets lose; an unsafe root loses immediately. Safety-until-goal treats success as absorbing and is not necessarily the original nonterminal infinite-safety objective. No fairness, probabilistic model, recurrent-goal guarantee, real deployment or new algorithm is implied.
 
 All 24 native test functions (8 original plus 16 new) pass on Python 3.10-3.13. Independent deterministic strategy-pair simulation checks 324 two-state and 32,928 three-state cases; 120 seeded larger cases and the 729-policy boundary have full replay. All six Node/Chrome tests pass. Complete native/JavaScript agreement covers 457 reports, 1,329 policies and 6,291 root outcomes. Actual Chrome drills all 12 controls at 320/390/1280, including every policy/root and 12 actual exports verified by the native CLI. Fresh installed wheels on all four Python versions reproduce 6 original and 12 reach-avoid reports through both entrypoints, check 8 module origins and reject 20 forged CLI records. These counts describe bounded coverage, not a proof or scaling benchmark. The original safety engine, checker, controls, JavaScript and tests retain their original semantics.
+
+
+## ShieldLab0.3: again is a different promise
+
+A target is live, not terminal. The new separate safety-and-Buchi inspector checks that every play stays safe **and visits a supplied target infinitely often**. One acknowledgement followed by permanent safe waiting passes first-hit reach-avoid but fails recurrence. Goal outgoing edges and environment ownership can change the answer.
+
+[Safe recurrence inspector](https://midya8.github.io/shieldlab/recurrence.html) | [Exact recurrence contract and inspected sources](RECURRENCE.md)
+
+Every nested greatest/least fixed-point round, every successor obligation, both players' complete positional-policy atlases, every root outcome and labeled failure lasso are retained. A separate checker enumerates full strategy pairs and simulates their unique plays; an independent JavaScript engine does the same. Complete branching proof graphs retain every opponent move and stop only at unsafe, never at a target.
+
+```sh
+python -m shieldlab.recurrence request.json --output report.json
+python -m shieldlab.recurrence report.json --verify
+node --test tests/test_recurrence_engine.mjs tests/test_recurrence_browser.cjs
+bash tools/check_recurrence_wheel.sh
+```
+
+Current local evidence: 39 Python tests, all 74,088 three-state graph/owner/safety-target configurations, a third matrix-cycle oracle, 498 complete cross-language/checker reports, 163 individual primitive-leaf forgeries, isolated installed reproduction and 12 trusted actual-Chrome downloads verified natively. Hosted release and deployment are separate checks, not inferred from these local results. Exact bounds remain six states and three moves per state, not a scalable solver or real-agent guarantee. Original safety and first-goal interfaces retain their meaning. No fairness, probabilities, private data or model API.

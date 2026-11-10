@@ -1,0 +1,28 @@
+name: Check safe recurrent-target games
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  installed-recurrence:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover -s tests -v
+      - run: bash tools/check_recurrence_wheel.sh
+  recurrence-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/test_recurrence_engine.mjs tests/test_recurrence_browser.cjs
